@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
 
 app.post('/insert', function(req, res){
 
-    if (res.body.fname == ''){
+    if (req.body.fname == ''){
         res.sendfile('app2.html')
     }
     else{
