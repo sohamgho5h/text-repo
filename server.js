@@ -6,6 +6,11 @@ const mongodb = require('mongodb')
 const databaseName = 'text-repo'
 
 let db
+let port = process.env.PORT
+
+if (port == null || port == ''){
+    port = 3000
+}
 
 let connectionString = 'mongodb+srv://bigbrownbag:pass_bigbrownbag@bigbrownbagdb-okwmh.mongodb.net/DBTextRepo?retryWrites=true&w=majority'
 app.use(express.urlencoded({extended: false}));
@@ -13,7 +18,7 @@ app.use(express.urlencoded({extended: false}));
 
 mongodb.connect(connectionString, {useNewUrlParser: true}, function(err, client){
    db = client.db()
-   app.listen(3000);
+   app.listen(port);
    console.log('Server Running')
 })
 
