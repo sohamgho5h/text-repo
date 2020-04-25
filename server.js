@@ -31,11 +31,16 @@ app.get('/', (req, res) => {
 
 app.post('/insert', function(req, res){
 
-    db.collection('CollectionTextRepo').insertOne({
-        'text': req.body.fname
-    }, (err, result) => {
+    if (res.body.fname == ''){
         res.sendfile('app2.html')
-    })
+    }
+    else{
+        db.collection('CollectionTextRepo').insertOne({
+            'text': req.body.fname
+        }, (err, result) => {
+            res.sendfile('app2.html')
+        })
+    }
 })
 
 app.post('/retrieve', (req, res) => {
