@@ -14,7 +14,8 @@ if (port == null || port == ''){
 
 let connectionString = 'mongodb+srv://bigbrownbag:pass_bigbrownbag@bigbrownbagdb-okwmh.mongodb.net/DBTextRepo?retryWrites=true&w=majority'
 app.use(express.urlencoded({extended: false}));
-
+app.use(express.json())
+app.use(express.static('public'));
 
 mongodb.connect(connectionString, {useNewUrlParser: true}, function(err, client){
    db = client.db()
@@ -32,13 +33,13 @@ app.get('/', (req, res) => {
 app.post('/insert', function(req, res){
 
     if (req.body.fname == ''){
-        res.sendfile('app2.html')
+        res.redirect('/')
     }
     else{
         db.collection('CollectionTextRepo').insertOne({
             'text': req.body.fname
         }, (err, result) => {
-            res.sendfile('app2.html')
+            res.redirect('/')
         })
     }
 })
@@ -80,14 +81,20 @@ app.post('/retrieve', (req, res) => {
                 </li>
     
                 ${items.map(function(item){
-                    return `<li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
+                    return `
+                    <li id = "${item._id}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
                     <span class="item-text"> ${item.text} </span>
-                </li>`
+                        <div>
+                            <button data-id = "${item._id}" class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
+                            <button data-id = "${item._id}" class="delete-me btn btn-danger btn-sm">Delete</button>
+                        </div>
+                    </li>`
                 }).join('\n')}
                 </ul>
                 
               </div>
-              
+            <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+            <script src = "/browser.js"></script>
             </body>
             </html> 
             `
@@ -95,7 +102,17 @@ app.post('/retrieve', (req, res) => {
     })
 })
 
+app.post('/update', function(req, res){
+    db.collection('CollectionTextRepo').findOneAndUpdate( {_id: new mongodb.ObjectId(req.body.id)} , {$set: {text: req.body.text }}, function(){
+        res.send("Updated")
+    })
+})
 
+app.post('/delete', function(req, res){
+    db.collection('CollectionTextRepo').deleteOne({_id: new mongodb.ObjectId(req.body.id)}, function(){
+        res.send("Deleted")
+    })
+})
 /*
 
 app.get('/', (req, res) => {
